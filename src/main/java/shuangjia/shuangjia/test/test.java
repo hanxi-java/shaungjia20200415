@@ -82,7 +82,7 @@ public class test {
                 Device device = deviceService.getDeviceByid(deviceProperty.getDeviceId());
                 //deviceProperty中含有deviceId属性，对应DataType对象的id属性,可以得到对应的dataType对象
                 DataType dataType = dataTypeService.getDataTypeById(deviceProperty.getDataTypeId());
-                //将得到的设备属性、设备、数据类型信息存入到data对象对应的属性中
+                //将得到的设备属性、设备、数据类型信息存入到data对象对应的属性中,便于后续操作
                 data.setDeviceProperty(deviceProperty);
                 data.setDevice(device);
                 data.setDataType(dataType);
