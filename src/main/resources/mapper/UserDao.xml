@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shuangjia.shuangjia.dao.UserDao">
+    <resultMap id="user" type="shuangjia.shuangjia.entities.User">
+        <id property="id" column="id"/>
+        <result property="userName" column="userName"/>
+        <result property="psw" column="psw"/>
+        <result property="name" column="name"/>
+        <result property="tele" column="tele"/>
+        <result property="email" column="email"/>
+        <result property="adDeptId" column="adDeptId"/>
+        <result property="weixinId" column="weixinId"/>
+        <result property="remark" column="remark"/>
+        <result property="state" column="state"/>
+        <collection property="role" ofType="shuangjia.shuangjia.entities.Role">
+            <id column="rid" property="rid" />
+            <result column="roleType" property="roleType" />
+            <result column="Rname" property="roleName" />
+            <result column="roleRemark" property="roleRemark" />
+        </collection>
+    </resultMap>
+    <resultMap id="userRole" type="shuangjia.shuangjia.entities.UserRole">
+        <id property="URId" column="id"/>
+        <result property="userCode" column="userCode"/>
+        <result property="roleId" column="roleId"/>
+    </resultMap>
+    <resultMap id="role" type="shuangjia.shuangjia.entities.Role">
+        <id property="rid" column="rid"/>
+        <result column="roleType" property="roleType" />
+        <result column="Rname" property="roleName" />
+        <result column="roleRemark" property="roleRemark" />
+    </resultMap>
+    <resultMap id="userDepart" type="shuangjia.shuangjia.entities.UserDepart">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+    <!--登录-->
+    <select id="loginRequired" parameterType="String" resultMap="user">
+        SELECT tu.*,tr.id AS rid,tr.name AS Rname,tr.roleType,tr.roleRemark FROM ts_user_role tur
+        RIGHT JOIN ts_user tu ON tu.id= tur.userId
+        LEFT JOIN ts_role tr ON tr.id= tur.roleId
+        WHERE tu.userName=#{userName} AND tu.psw=#{psw}
+        ORDER BY tr.roleType DESC
+    </select>
+    <!--通过userName查找用户-->
+    <select id="getUserInfoByUserName" parameterType="String" resultMap="user">
+        SELECT * from ts_user Where userName=#{userName}
+    </select>
+    <!--获取用户列表-->
+    <select id="getAllUserInfo" resultMap="user">
+        SELECT id,userName,name,tele,email,adDeptId,weixinId,remark,state
+        from ts_user
+        WHERE state!="注销"
+        limit #{index},#{pageSize}
+    </select>
+    <!--修改用户信息-->
+    <update id="updateUserInfo" parameterType="shuangjia.shuangjia.entities.User">
+        UPDATE ts_user
+        <set>
+            <if test="psw !=null">psw=#{psw},</if>
+            <if test="name !=null">name=#{name},</if>
+            <if test="tele !=null">tele=#{tele},</if>
+            <if test="email !=null">email=#{email},</if>
+            <if test="adDeptId !=0||adDeptId !=null">adDeptId=#{adDeptId},</if>
+            <if test="weixinId !=null">weixinId=#{weixinId},</if>
+            <if test="remark !=null">remark=#{remark},</if>
+            <if test="state !=null">state=#{state}</if>
+        </set>
+        WHERE userName=#{userName}
+    </update>
+    <!--增加用户信息-->
+    <insert id="addUser" parameterType="user" useGeneratedKeys="true" keyProperty="id">
+        INSERT into ts_user(UserName,Psw,NAME,Tele,Email,AdDeptId,weixinId,Remark,State)
+        VALUE
+        (#{userName},#{psw},#{name},#{tele},#{email},#{adDeptId},#{weixinId},#{remark},#{state})
+    </insert>
+    <!--删除用户信息-->
+    <delete id="deleteUser" parameterType="String">
+        DELETE from ts_user WHERE userName=#{userName}
+    </delete>
+    <!--查询用户角色-->
+    <select id ="isUserRole" parameterType="String" resultMap="role">
+        SELECT tr.id AS rid,tr.name AS Rname,tr.roleType,tr.roleRemark FROM ts_user_role tur
+        LEFT JOIN ts_user tu ON tu.id= tur.userId
+        LEFT JOIN ts_role tr ON tr.id= tur.roleId
+        WHERE tu.userName=#{userName}
+        ORDER BY tr.roleType DESC
+    </select>
+    <!--为用户添加角色-->
+    <insert id="addUserRole" parameterType="userRole" useGeneratedKeys="true" keyProperty="URId">
+        INSERT into ts_user_role(roleId,userId)
+        VALUE
+        (#{roleId},#{userId})
+    </insert>
+
+    <!--删除角色绑定-->
+    <delete id="deleteUserRole" parameterType="userRole">
+        DELETE from ts_user_role WHERE roleId=#{roleId} AND userId=#{userId}
+    </delete>
+    <!--删除角色绑定BYuserName-->
+    <delete id="deleteUserRoleByUserName" parameterType="String">
+        DELETE FROM ts_user_role WHERE
+        userId=( SELECT id FROM ts_user WHERE userName=#{userName});
+    </delete>
+    <!--查询用户部门-->
+    <select id="getUserDepart" resultMap="userDepart">
+        SELECT * FROM tb_admin_depart
+    </select>
+    <select id="getUserNum" resultType="int">
+        SELECT COUNT(*) FROM ts_user
+    </select>
+
+<!--按照id查找用户-->
+    <select id="getUserById"  resultMap="user">
+        SELECT *
+        FROM
+        ts_user
+        WHERE id=#{id}
+
+    </select>
+
+
+</mapper>

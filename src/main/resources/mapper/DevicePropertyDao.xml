@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shuangjia.shuangjia.dao.DevicePropertyDao">
+    <resultMap id="deviceProperty" type="shuangjia.shuangjia.entities.DeviceProperty">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="deviceId" property="deviceId"/>
+        <result column="dataTypeId" property="dataTypeId"/>
+        <result column="alarmTypeId" property="alarmTypeId"/>
+        <result column="alarmValue" property="alarmValue"/>
+        <result column="minValue" property="minValue"/>
+        <result column="maxValue" property="maxValue"/>
+        <result column="alarmMin" property="alarmMin"/>
+        <result column="alarmMax" property="alarmMax"/>
+        <result column="orderId" property="orderId"/>
+        <result column="monitorValue" property="monitorValue"/>
+        <result column="monitorDate" property="monitorDate"/>
+        <result column="dataUnit" property="dataUnit"/>
+        <result column="isShow" property="isShow"/>
+        <result column="shortName" property="shortName"/>
+        <collection property="device" ofType="shuangjia.shuangjia.entities.Device" resultMap="device">
+            <id column="tid" property="tid" />
+            <result column="tname" property="name" />
+            <result column="tremark" property="remark" />
+        </collection>
+    </resultMap>
+    <resultMap id="device" type="shuangjia.shuangjia.entities.Device">
+        <id property="deviceId" column="deviceId"/>
+        <result property="code" column="tcode"/>
+        <result property="name" column="tname"/>
+        <result property="remark" column="tremark"/>
+        <result property="departId" column="tdepartId"/>
+        <result property="parentId" column="parentId"/>
+        <result property="id" column="tid"/>
+    </resultMap>
+
+    <resultMap id="Devicetypedatamodel" type="shuangjia.shuangjia.entities.Devicetypedatamodel">
+        <id property="id" column="tid"/>
+        <result property="name" column="name"/>
+        <result property="deviceId" column="deviceId"/>
+        <result property="value" column="value"/>
+        <result property="typeUnit" column="typeUnit"/>
+        <result column="shortName" property="shortName"/>
+        <result column="monitorDate" property="monitorDate"/>
+        <result column="datatypeName" property="datatypeName"/>
+        <result column="property_define" property="property_define"/>
+    </resultMap>
+    <insert id="insertdecice" parameterType="shuangjia.shuangjia.entities.addmodl" statementType="CALLABLE">
+<!--        INSERT INTO  tb_branch-->
+<!--        VALUES-->
+<!--        (null,#{code},#{name},#{longitude},#{latitude},#{orderId},-->
+<!--        #{parentId},#{remark})-->
+        call aa(#{pipname},#{lng},#{lat},#{nodecode},#{pipecolor});
+    </insert>
+    <insert id="insert"  useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+        INSERT INTO  tb_device_property
+        VALUES
+        (null,#{code},#{name},#{deviceId},#{dataTypeId},#{alarmTypeId},
+		#{alarmValue},#{minValue},#{maxValue},#{alarmMin},#{alarmMax},#{orderId},#{monitorValue},
+		#{monitorDate},#{dataUnit},#{isShow})
+    </insert>
+    <select id="getByDeviceId" resultMap="deviceProperty">
+		SELECT
+		code,name,dataTypeId,alarmTypeId,alarmValue,minValue,
+        maxValue,alarmMin,alarmMax,orderId,monitorValue,monitorDate,dataUnit,isShow ,shortName
+        FROM tb_device_property
+		WHERE
+		deviceId=#{deviceId}
+		ORDER BY
+		monitorDate DESC
+	</select>
+    <select id="getAll"  resultMap="deviceProperty">
+        SELECT t.id,t.`name`,t.`monitorValue`,t.`monitorDate`  FROM tb_device_property t
+        ORDER BY t.id
+	</select>
+    <!--通过id查询设备熟属性-->
+    <select id="" resultMap="deviceProperty">
+        SELECT * FROM tb_device_property WHERE id=#{id}
+    </select>
+    <update id="update" parameterType="java.util.List">
+        <foreach collection="list" item="params" index="index" separator=";">
+            UPDATE tb_device_property SET
+                monitorValue=#{params.monitorValue},
+                monitorDate=#{params.monitorDate}
+                WHERE id=#{params.id}
+        </foreach>
+    </update>
+    <select id="getByLevel" parameterType="String" resultMap="deviceProperty">
+        SELECT tdp.*,td.id as tid,td.name as tname,td.code as tcode, td.remark as tremark,td.departId as tdepartId
+        FROM tb_device_property tdp LEFT JOIN tb_device td
+        ON tdp.deviceId=td.id
+        WHERE
+        tdp.dataTypeId=8 AND tdp.isShow=1 AND td.remark=#{remark}
+    </select>
+
+    <select id="getFlow" parameterType="String" resultMap="deviceProperty">
+        SELECT tdp.*,td.id as tid,td.name as tname,td.code as tcode, td.remark as tremark,td.departId as tdepartId
+        FROM tb_device_property tdp LEFT JOIN tb_device td
+        ON tdp.deviceId=td.id
+        WHERE
+        tdp.dataTypeId=3 AND tdp.isShow=1 AND td.remark=#{remark} AND tdp.`name` Like '%累计流量%';
+    </select>
+    <select id="getTurbidity" parameterType="String" resultMap="deviceProperty">
+        SELECT tdp.*,td.id as tid,td.name as tname,td.code as tcode, td.remark as tremark,td.departId as tdepartId
+        FROM tb_device_property tdp LEFT JOIN tb_device td
+        ON tdp.deviceId=td.id
+        WHERE
+        tdp.dataTypeId=9 AND td.remark=#{remark}
+    </select>
+
+    <select id="getCentral" parameterType="String" resultMap="deviceProperty">
+        select tdp.*,td.id as tid,td.name as tname,td.code as tcode, td.remark as tremark,td.departId as tdepartId
+        FROM tb_device td LEFT JOIN tb_device_property tdp
+        ON tdp.deviceId=td.`id` where  td.remark=#{remark} and tdp.`isShow`=1;
+    </select>
+    <!--order为设备排序id，deviceID对应设备ID-->
+<select id="getdevice" parameterType="String" resultMap="device">
+    select td.id as deviceId,td.order as tid,td.name as tname,td.code as tcode, td.remark as tremark,td.departId as tdepartId from tb_device td WHERE td.remark=#{remark} ORDER BY td.order;
+</select>
+
+    <select id="getdevicetypedate" parameterType="String" resultMap="Devicetypedatamodel">
+        select tdp.deviceId,tdp.name,tdp.monitorValue as value,tdp.dataUnit as typeUnit
+        FROM tb_device_property tdp
+        LEFT JOIN tb_device td
+        ON tdp.deviceId=td.id
+        WHERE td.remark=#{remark};
+    </select>
+    <!--通过设备id查询对应属性表-->
+    <select id="getdeviceById" parameterType="int" resultMap="Devicetypedatamodel">
+        <!--select deviceId,name,monitorValue as value,dataUnit as typeUnit ,monitorDate,remark from  tb_device_property where deviceid=#{deviceId} AND isShow=1;-->
+        SELECT tdp.deviceId,tdp.name,tdp.monitorValue as value,tdp.dataUnit as typeUnit ,DATE_FORMAT(tdp.monitorDate,'%H:%i:%s') monitorDate,tdp.shortName,td.name AS datatypeName
+        FROM tb_device_property tdp
+        LEFT join tb_datatype td
+        ON tdp.dataTypeId =td.id
+        WHERE tdp.deviceId=#{deviceId} AND tdp.isShow=1
+    </select>
+    <!--右-->
+    <select id="getdeviceById1" parameterType="int" resultMap="Devicetypedatamodel">
+        SELECT tdp.deviceId,tdp.name,tdp.monitorValue as value,tdp.dataUnit as typeUnit ,DATE_FORMAT(tdp.monitorDate,'%H:%i:%s') monitorDate,tdp.shortName,td.name AS datatypeName
+        FROM tb_device_property tdp
+        LEFT join tb_datatype td
+        ON tdp.dataTypeId =td.id
+        WHERE tdp.deviceId=#{deviceId} AND tdp.isShow=1 AND td.name LIKE '%流量%';
+    </select>
+    <!--左-->
+    <select id="getdeviceById2" parameterType="int" resultMap="Devicetypedatamodel">
+        SELECT tdp.deviceId,tdp.name,tdp.monitorValue as value,tdp.dataUnit as typeUnit ,DATE_FORMAT(tdp.monitorDate,'%H:%i:%s') monitorDate,tdp.shortName,td.name AS datatypeName
+        FROM tb_device_property tdp
+        LEFT join tb_datatype td
+        ON tdp.dataTypeId =td.id
+        WHERE tdp.deviceId=#{deviceId} AND tdp.isShow=1 AND td.name NOT LIKE '%流量%';
+    </select>
+    <insert id="insertData" parameterType="java.util.List">
+        insert into tb_data (device_property_id,collect_value,collect_date)
+        VALUES
+        <foreach collection="list" item="params" index="index" separator=",">
+            (#{params.id}, #{params.monitorValue}, #{params.monitorDate})
+        </foreach>
+    </insert>
+    <select id="getById"  resultMap="deviceProperty">
+        SELECT *
+        FROM tb_device_property
+        WHERE id=#{id};
+    </select>
+
+    <select id="getDevicePropertyById" resultMap="deviceProperty">
+        SELECT *
+        FROM tb_device_property
+        WHERE id=#{id};
+    </select>
+
+    <!--查询都江堰监控数据-->
+    <select id="getMonitorDu" resultMap="Devicetypedatamodel">
+        (SELECT id AS tid,shortName,monitorValue,monitorDate,NAME AS property_define,dataUnit AS typeUnit
+        FROM tb_device_property WHERE id =107 OR id=108)
+        UNION
+        (SELECT tp.id AS tid,tp.shortName,tp.monitorValue,tp.monitorDate,td.property_define,dataUnit AS typeUnit
+        FROM tb_device_property tp RIGHT JOIN tb_device_property_value_define td
+        ON tp.id=td.property_id
+        WHERE td.property_value=tp.monitorValue AND tp.id &gt;106 AND tp.id &lt;116 ORDER BY tp.orderId)
+    </select>
+</mapper>

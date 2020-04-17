@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shuangjia.shuangjia.dao.ItemDao">
+    <resultMap id="role" type="shuangjia.shuangjia.entities.Role">
+        <id column="id" property="Rid" />
+        <result column="roleType" property="roleType" />
+        <result column="name" property="name" />
+        <result column="roleRemark" property="roleRemark" />
+    </resultMap>
+    <resultMap id="duty" type="shuangjia.shuangjia.entities.UserRoleDuty">
+        <id column="DId" property="DId" />
+        <result column="roleId" property="roleId" />
+        <result column="itemId" property="itemId" />
+        <result column="dutyRemark" property="dutyRemark" />
+    </resultMap>
+    <resultMap id="module" type="shuangjia.shuangjia.entities.Module">
+        <id column="id" property="moduleId" />
+        <result column="code" property="code" />
+        <result column="name" property="label" />
+        <result column="visible" property="visible" />
+        <result column="moduleOrder" property="moduleOrder" />
+        <result column="remark" property="remark" />
+    </resultMap>
+    <resultMap id="item" type="shuangjia.shuangjia.entities.Item">
+        <id column="id" property="itemId" />
+        <result column="groupId" property="groupId" />
+        <result column="name" property="label" />
+        <result column="visible" property="visible" />
+        <result column="code" property="code" />
+        <result column="itemTypeId" property="itemTypeId" />
+        <result column="description" property="description" />
+        <result column="itemOrder" property="itemOrder" />
+        <result column="remark" property="remark" />
+        <result column="parentId" property="parentId" />
+    </resultMap>
+    <resultMap id="itemType" type="shuangjia.shuangjia.entities.zEntities.ItemType">
+        <id column="id" property="id" />
+        <result column="groupId" property="groupId" />
+        <result column="name" property="label" />
+        <result column="visible" property="visible" />
+        <result column="code" property="code" />
+        <result column="itemTypeId" property="itemTypeId" />
+        <result column="description" property="description" />
+        <result column="itemOrder" property="itemOrder" />
+        <result column="parentId" property="parentId" />
+    </resultMap>
+    <!--获取一级菜单-->
+    <select id="showModule" resultMap="module">
+        SELECT * FROM ts_module
+        WHERE visible=1 ORDER BY moduleOrder
+    </select>
+    <!--根据一级菜单ID获取二级普通菜单-->
+    <select id="showItem" resultMap="item">
+        SELECT * FROM ts_item
+        WHERE visible=1 AND ItemTypeId=0 AND GroupId=#{groupId}
+        ORDER BY ItemOrder
+    </select>
+    <!--根据父ID获取二级按钮菜单-->
+    <select id="showItemType" resultMap="itemType">
+        SELECT * FROM  ts_item
+        WHERE parentId=#{parentId}
+        AND ItemTypeId=1
+        AND visible=1
+        ORDER BY ItemOrder
+    </select>
+    <!--用户一级菜单-->
+    <select id="userModule"  resultMap="module">
+        SELECT  * FROM ts_module WHERE id IN
+        (SELECT DISTINCT groupID FROM ts_role_duty trd LEFT JOIN ts_item ti
+        ON trd.itemId=ti.id
+        WHERE trd.roleId IN (SELECT tur.roleId FROM ts_user_role tur
+        LEFT JOIN ts_user tu ON tu.id=tur.userId
+        WHERE tu.userName=#{userName}) AND ti.ItemTypeId=0) ORDER BY moduleOrder
+    </select>
+    <!--用户二级菜单-->
+    <select id="userItem" resultMap="item">
+        SELECT ti.* FROM ts_role_duty trd LEFT JOIN ts_item ti
+        ON trd.itemId=ti.id
+        WHERE trd.roleId IN (SELECT tur.roleId FROM ts_user_role tur
+        LEFT JOIN ts_user tu ON tu.id=tur.userId
+        WHERE tu.userName=#{userName})
+        AND ti.GroupId=#{groupId} AND ti.ItemTypeId=0
+        GROUP BY ti.id
+    </select>
+    <!--用户二级按钮-->
+    <select id="userItemType" resultMap="itemType">
+        SELECT ti.* FROM ts_role_duty trd LEFT JOIN ts_item ti
+        ON trd.itemId=ti.id
+        WHERE trd.roleId IN (SELECT tur.roleId FROM ts_user_role tur
+        LEFT JOIN ts_user tu ON tu.id=tur.userId
+        WHERE tu.userName=#{userName})
+        AND ti.parentId=#{parentId}
+        AND ti.ItemTypeId=1
+        ORDER BY ItemOrder
+    </select>
+</mapper>

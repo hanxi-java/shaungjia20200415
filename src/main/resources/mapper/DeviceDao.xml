@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shuangjia.shuangjia.dao.DeviceDao">
+    <resultMap id="device" type="shuangjia.shuangjia.entities.Device">
+        <id property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="remark" column="remark"/>
+        <result property="deviceId" column="id"/>
+        <result property="departId" column="departId"/>
+    </resultMap>
+
+    <select id="getDeviceByid" resultMap="device">
+		SELECT *
+        FROM tb_device
+		WHERE
+		id=#{id}
+	</select>
+
+    <select id="getAll"  resultMap="device">
+		SELECT *
+        FROM tb_device
+	</select>
+
+    <select id="getByStageName"  resultMap="device">
+		SELECT *
+        FROM tb_device
+        WHERE
+        remark=#{stageName}
+	</select>
+
+</mapper>

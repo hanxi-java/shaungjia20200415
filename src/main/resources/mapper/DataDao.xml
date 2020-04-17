@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shuangjia.shuangjia.dao.DataDao">
+    <resultMap id="deviceProperty" type="shuangjia.shuangjia.entities.Data">
+        <id property="id" column="tid"/>
+        <result property="device_property_id" column="device_property_id"/>
+        <result property="collect_value" column="collect_value"/>
+        <result property="collect_date" column="collect_date"/>
+    </resultMap>
+    <resultMap id="device" type="shuangjia.shuangjia.entities.Device">
+        <id property="id" column="tid"/>
+        <result property="code" column="tcode"/>
+        <result property="name" column="tname"/>
+        <result property="remark" column="tremark"/>
+        <result property="departId" column="tdepartId"/>
+    </resultMap>
+
+    <resultMap id="Devicetypedatamodel" type="shuangjia.shuangjia.entities.Devicetypedatamodel">
+        <id property="id" column="tid"/>
+        <result property="name" column="name"/>
+        <result property="deviceId" column="deviceId"/>
+        <result property="value" column="value"/>
+        <result property="typeUnit" column="typeUnit"/>
+        <result column="remark" property="remark"/>
+        <result column="monitorDate" property="monitorDate"/>
+        <result column="datatypeName" property="datatypeName"/>
+    </resultMap>
+
+    <select id="getDatasPerHour" resultType="shuangjia.shuangjia.entities.Data">
+        SELECT * FROM tb_data
+        WHERE  collect_date
+        BETWEEN  #{beginDateFormat}  AND #{endDataFormat}
+    </select>
+</mapper>

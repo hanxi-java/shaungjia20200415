@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shuangjia.shuangjia.dao.DayDataDao">
+    <resultMap id="dayData" type="shuangjia.shuangjia.entities.DayData">
+        <id property="dataId" column="dataId"/>
+        <result property="deviceId" column="deviceId"/>
+        <result property="deviceName" column="deviceName"/>
+        <result property="stage" column="stage"/>
+        <result property="dataTypeId" column="dataTypeId"/>
+        <result property="dataTypeName" column="dataTypeName"/>
+        <result property="avgValue" column="avgValue"/>
+        <result property="minValue" column="minValue"/>
+        <result property="maxValue" column="maxValue"/>
+        <result property="dataUnit" column="dataUnit"/>
+        <result property="timePoint" column="timePoint"/>
+
+    </resultMap>
+   <insert id="insert" useGeneratedKeys="true" parameterType="java.util.List">
+       INSERT INTO
+       tb_report_day_data
+       VALUES
+       <foreach collection="dayDataList" item="dayData" index="index" separator=",">
+           (
+           null,
+           #{dayData.deviceId},
+           #{dayData.deviceName},
+           #{dayData.stage},
+           #{dayData.dataTypeId},
+           #{dayData.dataTypeName},
+           #{dayData.avgValue},
+           #{dayData.minValue},
+           #{dayData.maxValue},
+           #{dayData.dataUnit},
+           #{dayData.timePoint}
+           )
+       </foreach>
+   </insert>
+
+    <select id="queryDayDataList" resultMap="dayData" >
+        SELECT *
+        FROM
+        tb_report_day_data
+        <where>
+            <if test="dayData.stage!=null and dayData.stage!=''">
+                AND stage=#{dayData.stage}
+            </if>
+            <if test="dayData.deviceId!=null and dayData.deviceId!=''">
+                AND deviceId=#{dayData.deviceId}
+            </if>
+            <if test="dayData.timePoint !=null and dayData.timePoint!=''">
+                AND timePoint like concat(#{dayData.timePoint},'%')
+            </if>
+        </where>
+        order by timePoint asc,dataTypeId asc
+
+    </select>
+
+    <select id="getMonthData" resultMap="dayData">
+    SELECT * FROM tb_report_day_data
+        WHERE  timePoint
+        LIKE  concat(#{beginMonthFormat},'%')
+
+</select>
+
+
+</mapper>

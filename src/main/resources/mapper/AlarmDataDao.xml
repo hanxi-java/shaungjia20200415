@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shuangjia.shuangjia.dao.AlarmDataDao">
+    <resultMap id="alarmData" type="shuangjia.shuangjia.entities.AlarmData">
+        <id column="id" property="alarmDataId"/>
+        <result column="dataTypeId" property="dataTypeId"/>
+        <result column="dataTypeName" property="dataTypeName"/>
+        <result column="deviceId" property="deviceId"/>
+        <result column="deviceName" property="deviceName"/>
+        <result column="stage" property="stage"/>
+        <result column="monitorValue" property="monitorValue"/>
+        <result column="alarmTime" property="alarmTime"/>
+        <result column="alarmType" property="alarmType"/>
+        <result column="grade" property="grade"/>
+        <result column="dealState" property="dealState"/>
+        <result column="dealContent" property="dealContent"/>
+        <result column="dealTime" property="dealTime"/>
+        <result column="dealPersonId" property="dealPersonId"/>
+        <result column="dealPerson" property="dealPerson"/>
+        <result column="dataUnit" property="dataUnit"/>
+    </resultMap>
+
+    <select id="getAll"  resultMap="alarmData">
+        SELECT *
+        FROM
+        tb_alarm_data
+        <where>
+            <if test="alarmData.grade!=null and alarmData.grade!=''">
+                AND grade=#{alarmData.grade}
+            </if>
+            <if test="alarmData.dealState!=null and alarmData.dealState!=''">
+                AND dealState=#{alarmData.dealState}
+            </if>
+            <if test="alarmData.dealTime !=null and alarmData.dealTime!=''">
+                AND dealTime  BETWEEN #{dateBegin} AND #{dateEnd}
+            </if>
+        </where>
+        Limit #{beginIndex},#{pageSize}
+    </select>
+
+    <select id="getAllWithoutCondition"  resultMap="alarmData">
+        SELECT *
+        FROM
+        tb_alarm_data
+    </select>
+
+    <select id="getTotal" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM
+        tb_alarm_data
+        <where>
+            <if test="alarmData.grade!=null and alarmData.grade!=''">
+                AND grade=#{alarmData.grade}
+            </if>
+            <if test="alarmData.dealState!=null and alarmData.dealState!=''">
+                AND dealState=#{alarmData.dealState}
+            </if>
+            <if test="alarmData.dealTime !=null and alarmData.dealTime!=''">
+                AND dealTime  BETWEEN #{dateBegin} AND #{dateEnd}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" parameterType="java.util.List">
+        INSERT INTO
+        tb_alarm_data
+        VALUES
+        <foreach collection="alarmDatas" item="alarmData" index="index" separator=",">
+            (
+            null,
+            #{alarmData.dataTypeId},
+            #{alarmData.dataTypeName},
+            #{alarmData.deviceId},
+            #{alarmData.deviceName},
+            #{alarmData.stage},
+            #{alarmData.monitorValue},
+            #{alarmData.alarmTime},
+            #{alarmData.alarmType},
+            #{alarmData.grade},
+            #{alarmData.dealState},
+            #{alarmData.dealContent},
+            #{alarmData.dealTime},
+            #{alarmData.dealPersonId},
+            #{alarmData.dealPerson},
+            #{alarmData.dataUnit}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deleteAll" >
+       TRUNCATE TABLE
+       tb_alarm_data
+    </delete>
+
+
+
+</mapper>

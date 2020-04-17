@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shuangjia.shuangjia.dao.MonthDataDao">
+    <resultMap id="monthData" type="shuangjia.shuangjia.entities.MonthData">
+        <id property="dataId" column="dataId"/>
+        <result property="deviceId" column="deviceId"/>
+        <result property="deviceName" column="deviceName"/>
+        <result property="stage" column="stage"/>
+        <result property="dataTypeId" column="dataTypeId"/>
+        <result property="dataTypeName" column="dataTypeName"/>
+        <result property="avgValue" column="avgValue"/>
+        <result property="minValue" column="minValue"/>
+        <result property="maxValue" column="maxValue"/>
+        <result property="dataUnit" column="dataUnit"/>
+        <result property="timePoint" column="timePoint"/>
+
+    </resultMap>
+   <insert id="insert" useGeneratedKeys="true" parameterType="java.util.List">
+       INSERT INTO
+       tb_report_month_data
+       VALUES
+       <foreach collection="monthDataList" item="monthData" index="index" separator=",">
+           (
+           null,
+           #{monthData.deviceId},
+           #{monthData.deviceName},
+           #{monthData.stage},
+           #{monthData.dataTypeId},
+           #{monthData.dataTypeName},
+           #{monthData.avgValue},
+           #{monthData.minValue},
+           #{monthData.maxValue},
+           #{monthData.dataUnit},
+           #{monthData.timePoint}
+           )
+       </foreach>
+   </insert>
+
+    <select id="queryMonthDataList" resultMap="monthData" >
+        SELECT *
+        FROM
+        tb_report_month_data
+        <where>
+            <if test="monthData.stage!=null and monthData.stage!=''">
+                AND stage=#{monthData.stage}
+            </if>
+            <if test="monthData.deviceId!=null and monthData.deviceId!=''">
+                AND deviceId=#{monthData.deviceId}
+            </if>
+            <if test="monthData.timePoint !=null and monthData.timePoint!=''">
+                AND timePoint like concat('%',#{monthData.timePoint},'%')
+            </if>
+        </where>
+        order by timePoint asc,dataTypeId asc
+
+    </select>
+
+
+
+
+</mapper>

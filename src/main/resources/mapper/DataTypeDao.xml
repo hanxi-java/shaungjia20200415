@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shuangjia.shuangjia.dao.DataTypeDao">
+    <resultMap id="dataType" type="shuangjia.shuangjia.entities.DataType">
+        <id property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="dataTypeName" column="name"/>
+    </resultMap>
+
+    <select id="getDataTypeById" resultMap="dataType">
+        SELECT * FROM tb_datatype
+        WHERE
+        id=#{dataTypeId}
+    </select>
+
+    <select id="getAll" resultMap="dataType">
+        SELECT * FROM tb_datatype
+    </select>
+
+</mapper>

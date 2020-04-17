@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shuangjia.shuangjia.dao.AlarmDefineDao">
+    <resultMap id="alarmDefine" type="shuangjia.shuangjia.entities.AlarmDefine">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="alarmTypeId" property="alarmTypeId"/>
+        <result column="gradeId" property="gradeId"/>
+        <result column="devicePropertyId" property="devicePropertyId"/>
+        <result column="val" property="val"/>
+        <result column="isStop" property="isStop"/>
+        <result column="triggerNum" property="triggerNum"/>
+        <result column="DevicePropertyValueDefineId" property="DevicePropertyValueDefineId"/>
+        <result column="faultTypeId" property="faultTypeId"/>
+    </resultMap>
+
+    <select id="getAlarmDefineById" resultMap="alarmDefine">
+        SELECT *
+        FROM
+        tb_alarmdefine
+        WHERE
+        id=#{id}
+    </select>
+
+
+</mapper>

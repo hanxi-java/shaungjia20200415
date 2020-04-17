@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shuangjia.shuangjia.dao.RoleDao">
+    <resultMap id="role" type="shuangjia.shuangjia.entities.Role">
+        <id column="id" property="rid" />
+        <result column="roleType" property="roleType" />
+        <result column="name" property="roleName" />
+        <result column="roleRemark" property="roleRemark" />
+    </resultMap>
+    <resultMap id="duty" type="shuangjia.shuangjia.entities.UserRoleDuty">
+        <id column="DId" property="DId" />
+        <result column="roleId" property="roleId" />
+        <result column="itemId" property="itemId" />
+        <result column="dutyRemark" property="dutyRemark" />
+    </resultMap>
+    <resultMap id="module" type="shuangjia.shuangjia.entities.Module">
+        <id column="id" property="moduleId" />
+        <result column="code" property="code" />
+        <result column="name" property="label" />
+        <result column="visible" property="visible" />
+        <result column="moduleOrder" property="moduleOrder" />
+        <result column="remark" property="remark" />
+    </resultMap>
+    <resultMap id="item" type="shuangjia.shuangjia.entities.Item">
+        <id column="id" property="itemId" />
+        <result column="groupId" property="groupId" />
+        <result column="name" property="label" />
+        <result column="visible" property="visible" />
+        <result column="code" property="code" />
+        <result column="itemTypeId" property="itemTypeId" />
+        <result column="description" property="description" />
+        <result column="itemOrder" property="itemOrder" />
+        <result column="remark" property="remark" />
+        <result column="parentId" property="parentId" />
+    </resultMap>
+    <resultMap id="itemType" type="shuangjia.shuangjia.entities.zEntities.ItemType">
+        <id column="id" property="id" />
+        <result column="groupId" property="groupId" />
+        <result column="name" property="label" />
+        <result column="visible" property="visible" />
+        <result column="code" property="code" />
+        <result column="itemTypeId" property="itemTypeId" />
+        <result column="description" property="description" />
+        <result column="itemOrder" property="itemOrder" />
+        <result column="parentId" property="parentId" />
+    </resultMap>
+
+    <!--用户角色展示-->
+    <select id="showRole" parameterType="String" resultMap="role">
+        SELECT * from ts_role ORDER BY id
+    </select>
+    <!--根据roleType查询角色信息-->
+    <select id="getRoleByType" parameterType="int" resultMap="role">
+        SELECT * from ts_role WHERE roleType=#{roleType}
+    </select>
+    <!--修改用户信息-->
+    <update id="updateRole" parameterType="role">
+        UPDATE ts_role
+        <set>
+            <if test="roleType!=null">roleType=#{roleType},</if>
+            <if test="name !=null">name=#{roleName},</if>
+            <if test="roleRemark !=null">roleRemark=#{roleRemark},</if>
+        </set>
+        WHERE id=#{rid}
+    </update>
+    <!--增加角色信息-->
+    <insert id="addRole" parameterType="role" useGeneratedKeys="true" keyProperty="rid">
+        INSERT into ts_role(roleType,NAME,roleRemark)
+        VALUE
+        (#{roleType},#{roleName},#{roleRemark})
+    </insert>
+    <!--获取用户条数-->
+    <select id="showRoleNum" parameterType="role" resultType="int">
+        SELECT COUNT(*) FROM ts_role
+        WHERE  roleType =#{roleType} OR NAME=#{roleName}
+    </select>
+    <!--删除用户信息-->
+   <delete id="deleteRole" parameterType="int">
+        DELETE from ts_role WHERE id=#{Rid}
+    </delete>
+    <!--清空该角色菜单表信息-->
+    <delete id="deleteRoleDuty" parameterType="int">
+        DELETE from ts_role_duty WHERE roleId=#{Rid}
+    </delete>
+    <!--删除角色菜单表-->
+    <delete id="deleteSomeRoleDuty" parameterType="int">
+        DELETE from ts_role_duty WHERE roleId=#{roleId} AND itemId=#{itemId}
+    </delete>
+    <!--新增角色菜单关系-->
+    <insert id="addRoleDuty" parameterType="shuangjia.shuangjia.entities.UserRoleDuty" useGeneratedKeys="true" keyProperty="DId">
+        INSERT into ts_role_duty(roleId,itemId)
+        VALUE
+        (#{roleId},#{itemId})
+    </insert>
+    <!--获取角色对应一级菜单-->
+    <select id="getModuleByRole" parameterType="int" resultMap="module">
+        SELECT  * FROM ts_module WHERE id IN
+        (SELECT DISTINCT groupID FROM ts_role_duty trd LEFT JOIN ts_item ti
+        ON trd.itemId=ti.id
+        WHERE trd.roleId=#{roleId} AND ti.ItemTypeId=0) ORDER BY moduleOrder
+    </select>
+    <!--获取角色对应二级普通菜单-->
+    <select id="getItemByRole" resultMap="item">
+        SELECT ti.* FROM ts_role_duty trd LEFT JOIN ts_item ti
+        ON trd.itemId=ti.id
+        WHERE trd.roleId=#{roleId} AND ti.GroupId=#{groupId} AND ti.ItemTypeId=0
+        ORDER BY ItemOrder
+    </select>
+    <!--获取角色对应二级按钮菜单-->
+    <select id="getItemTypeByRole" resultMap="itemType">
+        SELECT ti.* FROM ts_role_duty trd LEFT JOIN ts_item ti
+        ON trd.itemId=ti.id
+        WHERE trd.roleId=#{roleId} AND ti.GroupId=#{groupId}
+        AND ti.parentId=#{parentId}
+        AND ti.ItemTypeId=1
+        ORDER BY ItemOrder
+    </select>
+</mapper>

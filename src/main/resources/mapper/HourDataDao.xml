@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shuangjia.shuangjia.dao.HourDataDao">
+    <resultMap id="hourData" type="shuangjia.shuangjia.entities.HourData">
+        <id property="dataId" column="dataId"/>
+        <result property="deviceId" column="deviceId"/>
+        <result property="deviceName" column="deviceName"/>
+        <result property="stage" column="stage"/>
+        <result property="dataTypeId" column="dataTypeId"/>
+        <result property="dataTypeName" column="dataTypeName"/>
+        <result property="avgValue" column="avgValue"/>
+        <result property="minValue" column="minValue"/>
+        <result property="maxValue" column="maxValue"/>
+        <result property="dataUnit" column="dataUnit"/>
+        <result property="reportHour" column="reportHour"/>
+        <result property="timePoint" column="timePoint"/>
+
+    </resultMap>
+
+    <insert id="insert"  useGeneratedKeys="true" parameterType="java.util.List">
+        INSERT INTO
+        tb_report_hour_data
+        VALUES
+        <foreach collection="hourDataList" item="hourData" index="index" separator=",">
+            (
+            null,
+            #{hourData.deviceId},
+            #{hourData.deviceName},
+            #{hourData.stage},
+            #{hourData.dataTypeId},
+            #{hourData.dataTypeName},
+            #{hourData.avgValue},
+            #{hourData.minValue},
+            #{hourData.maxValue},
+            #{hourData.dataUnit},
+            #{hourData.reportHour},
+            #{hourData.timePoint}
+            )
+        </foreach>
+    </insert>
+
+    <select id="getDayReportData" resultMap="hourData">
+        SELECT * FROM
+        tb_report_hour_data
+        WHERE
+        stage=#{stage}  AND
+        deviceId=#{deviceId}  AND
+        reportHour  LIKE  concat(#{reportDate},'%')  AND
+        dataTypeId=#{dataTypeId}
+    </select>
+
+    <select id="getDayData" resultMap="hourData">
+        SELECT * FROM tb_report_hour_data
+        WHERE  reportHour
+        LIKE  concat('%',#{beginDateFormat},'%')
+    </select>
+
+    <select id="queryHourDataList" resultMap="hourData" >
+        SELECT *
+        FROM
+        tb_report_hour_data
+        <where>
+            <if test="reportHourData.stage!=null and reportHourData.stage!=''">
+                AND stage=#{reportHourData.stage}
+            </if>
+            <if test="reportHourData.deviceId!=null and reportHourData.deviceId!=''">
+                AND deviceId=#{reportHourData.deviceId}
+            </if>
+            <if test="reportHourData.reportHour !=null and reportHourData.reportHour!=''">
+                AND reportHour like concat('%',#{reportHourData.reportHour},'%')
+            </if>
+        </where>
+        order by reportHour asc,dataTypeId asc
+
+    </select>
+    <!--limit #{rowIndex},#{pageSize}-->
+
+
+
+</mapper>

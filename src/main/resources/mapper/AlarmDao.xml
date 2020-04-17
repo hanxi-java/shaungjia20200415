@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shuangjia.shuangjia.dao.AlarmDao">
+    <resultMap id="Getaranch" type="shuangjia.shuangjia.entities.Aranch">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="longitude" property="longitude"/>
+        <result column="latitude" property="latitude"/>
+        <result column="orderId" property="orderId"/>
+        <result column="parentId" property="parentId"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+    <resultMap id="user" type="shuangjia.shuangjia.entities.User">
+        <id property="id" column="id"/>
+        <result property="userName" column="userName"/>
+        <result property="psw" column="psw"/>
+        <result property="name" column="name"/>
+        <result property="tele" column="tele"/>
+        <result property="email" column="email"/>
+        <result property="adDeptId" column="adDeptId"/>
+        <result property="weixinId" column="weixinId"/>
+        <result property="remark" column="remark"/>
+        <result property="state" column="state"/>
+    </resultMap>
+    <resultMap id="GetDevice" type="shuangjia.shuangjia.entities.Device">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="remark" property="remark"/>
+        <result column="departId" property="departId"/>
+        <result column="deviceId" property="deviceId"/>
+        <result column="parentId" property="parentId"/>
+    </resultMap>
+    <resultMap id="GetDeviceProperty" type="shuangjia.shuangjia.entities.DeviceProperty">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="deviceId" property="deviceId"/>
+        <result column="departId" property="departId"/>
+        <result column="orderId" property="orderId"/>
+    </resultMap>
+    <resultMap id="GetDepart" type="shuangjia.shuangjia.entities.Depart">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="branchId" property="branchId"/>
+    </resultMap>
+    <resultMap id="getFaultType" type="shuangjia.shuangjia.entities.FaultType">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="faultDesc" property="faultDesc"/>
+        <result column="alarmTypename" property="alarmTypename"/>
+        <result column="alarmTypid" property="alarmTypid"/>
+    </resultMap>
+    <resultMap id="getgrade" type="shuangjia.shuangjia.entities.grade">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+    </resultMap>
+    <resultMap id="getAlarmType" type="shuangjia.shuangjia.entities.AlarmType">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="code" property="code"/>
+    </resultMap>
+    <resultMap id="getDevicePropertyValueDefine" type="shuangjia.shuangjia.entities.DevicePropertyValueDefine">
+        <id column="id" property="id"/>
+        <result column="property_id" property="PropertyId"/>
+        <result column="property_value" property="PropertyValue"/>
+        <result column="property_define" property="propertyDefine"/>
+    </resultMap>
+    <resultMap id="getAlarmDefine" type="shuangjia.shuangjia.entities.AlarmDefine">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="alarmTypeId" property="alarmTypeId"/>
+        <result column="gradeId" property="gradeId"/>
+        <result column="devicePropertyId" property="devicePropertyId"/>
+        <result column="val" property="val"/>
+        <result column="isStop" property="isStop"/>
+        <result column="triggerNum" property="triggerNum"/>
+        <result column="DevicePropertyValueDefineId" property="DevicePropertyValueDefineId"/>
+        <result column="faultTypeId" property="faultTypeId"/>
+        <result column="alarmTypename" property="alarmTypename"/>
+        <result column="gradename" property="gradename"/>
+        <result column="devicePropertyname" property="devicePropertyname"/>
+        <result column="faultTypename" property="faultTypename"/>
+        <result column="propertyDefine" property="propertyDefine"/>
+    </resultMap>
+
+    <resultMap id="gettbalarm" type="shuangjia.shuangjia.entities.Tbalarm">
+        <id column="id" property="id"/>
+        <result column="alarmDefineId" property="alarmDefineId"/>
+        <result column="devicePropertyId" property="devicePropertyId"/>
+        <result column="alarmContent" property="alarmContent"/>
+        <result column="alarmTime" property="alarmTime"/>
+        <result column="alarmStateId" property="alarmStateId"/>
+        <result column="alarmValue" property="alarmValue"/>
+        <result column="dealContent" property="dealContent"/>
+        <result column="dealTime" property="dealTime"/>
+        <result column="dealPersonId" property="dealPersonId"/>
+        <result column="alarmDefinename" property="alarmDefinename"/>
+        <result column="devicePropertyname" property="devicePropertyname"/>
+        <result column="alarmState" property="alarmState"/>
+        <result column="dealPerson" property="dealPerson"/>
+        <result column="gradename" property="gradename"/>
+    </resultMap>
+    <resultMap id="getalarmstate" type="shuangjia.shuangjia.entities.alarmstate">
+        <id column="id" property="id"/>
+        <result column="CODE" property="code"/>
+        <result column="NAME" property="name"/>
+    </resultMap>
+    <resultMap id="gettreeid" type="shuangjia.shuangjia.entities.AlarmDefine">
+        <result column="devicePropertyId" property="devicePropertyId"/>
+        <result column="deviceid" property="deviceid"/>
+        <result column="branchid" property="branchid"/>
+    </resultMap>
+    <update id="Updatealarmvalue" parameterType="shuangjia.shuangjia.entities.Alarmdevicemodel">
+        UPDATE  tb_device_property SET
+        minValue=#{minValue},
+        `maxValue`=#{maxValue},
+        alarmMin=#{alarmMin},
+        alarmMax=#{alarmMax} WHERE id=#{devicepropertyid};
+    </update>
+    <update id="UpdateFaultType" parameterType="shuangjia.shuangjia.entities.FaultType">
+        UPDATE  tb_faulttype SET
+        NAME=#{name},
+        `faultDesc`=#{faultDesc},
+        parentId=#{alarmTypid} WHERE id=#{id};
+    </update>
+    <update id="Updategrade" parameterType="shuangjia.shuangjia.entities.grade">
+        UPDATE  tb_grade SET
+        NAME=#{name},
+        code=#{code}
+         WHERE id=#{id};
+    </update>
+    <select id="GetAranch" resultMap="Getaranch">
+        SELECT * FROM tb_branch ORDER BY orderid
+    </select>
+    <select id="GetDevice" resultMap="GetDevice">
+<!--        SELECT * FROM tb_device ORDER BY `order`-->
+        SELECT id AS deviceId,CODE,NAME,remark,`order` AS id,departid FROM tb_device ORDER BY `order`
+    </select>
+    <select id="GetDeviceProperty" resultMap="GetDeviceProperty">
+        SELECT * FROM tb_device_property WHERE isshow=1  ORDER BY orderid
+    </select>
+    <select id="GetDevicePropertybydeviceid" resultMap="GetDeviceProperty">
+        SELECT * FROM tb_device_property WHERE isshow=1 and deviceId=#{deviceid} ORDER BY orderid
+    </select>
+    <select id="GetDepart" resultMap="GetDepart">
+        SELECT id,name,branchid FROM tb_depart
+    </select>
+    <select id="getFaultType" resultMap="getFaultType">
+       SELECT a.id,a.`CODE`,a.`NAME`,b.`name` AS alarmTypename,a.`faultDesc`,b.id as `alarmTypid` FROM
+       tb_faulttype a  JOIN  tb_alarmtype b ON b.id=a.`parentId`
+<!--        select * from tb_faulttype-->
+    </select>
+    <select id="getAlarmType" resultMap="getAlarmType">
+        SELECT * FROM tb_alarmtype
+    </select>
+    <insert id="AddFaultType" parameterType="shuangjia.shuangjia.entities.FaultType">
+        INSERT INTO  tb_faulttype
+        VALUES
+        (null,#{code},#{name},#{faultDesc},#{alarmTypid})
+    </insert>
+    <delete id="DelteFaultType" >
+       delete from tb_faulttype where id=#{id}
+    </delete>
+    <select id="getgrade" resultMap="getgrade">
+        SELECT * FROM tb_grade
+    </select>
+<!--按照id获取报警数据  韩熙-->
+    <select id="getGradeById" resultMap="getgrade">
+        SELECT * FROM tb_grade
+        WHERE
+        id=#{id}
+    </select>
+
+    <delete id="Deltegrade" >
+        delete from tb_grade where id=#{id}
+    </delete>
+    <insert id="Addgrade" parameterType="shuangjia.shuangjia.entities.grade">
+        INSERT INTO  tb_grade
+        VALUES
+        (null,#{code},#{name})
+    </insert>
+    <select id="getAlarmDefine" resultMap="getAlarmDefine">
+<!--        SELECT a.*,b.`name` AS alarmTypename,c.name AS gradename,d.name AS devicePropertyname,e.property_define AS propertyDefine,f.NAME AS faultTypename FROM tb_alarmdefine a JOIN tb_alarmtype b ON a.alarmTypeId=b.`id`-->
+<!--        JOIN tb_grade c ON a.gradeId=c.id-->
+<!--        JOIN tb_device_property d ON d.id=a.devicePropertyId-->
+<!--        JOIN tb_device_property_value_define e ON a.DevicePropertyValueDefineId=e.id-->
+<!--        JOIN tb_faulttype f ON a.faultTypeId=f.id where ${wheres} limit #{pageIndexs},#{pageSize}-->
+        SELECT a.*,b.`name` AS alarmTypename,c.name AS gradename,d.name AS devicePropertyname,f.NAME AS faultTypename FROM tb_alarmdefine a JOIN tb_alarmtype b ON a.alarmTypeId=b.`id`
+        JOIN tb_grade c ON a.gradeId=c.id
+        JOIN tb_device_property d ON d.id=a.devicePropertyId
+        JOIN tb_faulttype f ON a.faultTypeId=f.id where ${wheres} limit #{pageIndexs},#{pageSize}
+    </select>
+    <select id="getAlarmDefinecount" resultType="java.lang.Integer">
+        SELECT count(1) FROM tb_alarmdefine a JOIN tb_alarmtype b ON a.alarmTypeId=b.`id`
+        JOIN tb_grade c ON a.gradeId=c.id
+        JOIN tb_device_property d ON d.id=a.devicePropertyId
+        JOIN tb_faulttype f ON a.faultTypeId=f.id where #{wheres}
+    </select>
+    <select id="getAlarmDefineByWhere" resultMap="getAlarmDefine">
+        SELECT a.*,b.`name` AS alarmTypename,c.name AS gradename,d.name AS devicePropertyname,e.property_define AS propertyDefine,f.NAME AS faultTypename FROM tb_alarmdefine a JOIN tb_alarmtype b ON a.alarmTypeId=b.`id`
+        JOIN tb_grade c ON a.gradeId=c.id
+        JOIN tb_device_property d ON d.id=a.devicePropertyId
+        JOIN tb_device_property_value_define e ON a.DevicePropertyValueDefineId=e.id
+        JOIN tb_faulttype f ON a.faultTypeId=f.id where #{wheres} limit #{pageIndexs},#{pageSize}
+    </select>
+    <select id="getAlarmDefineByWherecount" resultType="java.lang.Integer">
+        SELECT count(1) as counts FROM tb_alarmdefine a JOIN tb_alarmtype b ON a.alarmTypeId=b.`id`
+        JOIN tb_grade c ON a.gradeId=c.id
+        JOIN tb_device_property d ON d.id=a.devicePropertyId
+        JOIN tb_device_property_value_define e ON a.DevicePropertyValueDefineId=e.id
+        JOIN tb_faulttype f ON a.faultTypeId=f.id where #{wheres}
+    </select>
+
+    <update id="UpdAlarmDefine" parameterType="shuangjia.shuangjia.entities.AlarmDefine">
+        UPDATE  tb_alarmdefine SET
+        alarmTypeId=#{alarmTypeId},
+        gradeId=#{gradeId},
+        devicePropertyId=#{devicePropertyId},
+        val=#{val},
+        isStop=#{isStop},
+        triggerNum=#{triggerNum},
+        DevicePropertyValueDefineId=#{DevicePropertyValueDefineId},
+        faultTypeId=#{faultTypeId},
+        name=#{name}
+        WHERE id=#{id};
+    </update>
+    <insert id="AddAlarmDefine" parameterType="shuangjia.shuangjia.entities.AlarmDefine">
+        INSERT INTO  tb_alarmdefine
+        VALUES
+        (null,#{name},#{alarmTypeId},#{gradeId},#{devicePropertyId},#{val},#{isStop},#{triggerNum},#{DevicePropertyValueDefineId},#{faultTypeId})
+    </insert>
+    <delete id="DeleteAlarmDefine" >
+        delete from tb_alarmdefine where id=#{id}
+    </delete>
+    <select id="getDevicePropertyValueDefine" resultMap="getDevicePropertyValueDefine">
+        select * from tb_device_property_value_define
+    </select>
+    <select id="getDevicePropertyValueDefinebydeviceid" resultMap="getDevicePropertyValueDefine">
+        select * from tb_device_property_value_define where property_id=#{deviceid}
+    </select>
+    <insert id="AddDevicePropertyValueDefine" parameterType="shuangjia.shuangjia.entities.DevicePropertyValueDefine">
+        INSERT INTO  tb_device_property_value_define
+        VALUES
+        (null,#{ProppertyId},#{PropertyValue},#{propertyDefine})
+    </insert>
+    <delete id="DeleteDevicePropertyValueDefine" >
+        delete from tb_device_property_value_define where id=#{id}
+    </delete>
+    <update id="UpdDevicePropertyValueDefine" parameterType="shuangjia.shuangjia.entities.DevicePropertyValueDefine">
+        UPDATE  tb_device_property_value_define SET
+        propperty_id=#{ProppertyId},
+        property_value=#{PropertyValue},
+        property_define=#{propertyDefine}
+        WHERE id=#{id};
+    </update>
+    <select id="getalarmstate" resultMap="getalarmstate">
+        select * from tb_alarmstate
+    </select>
+    <select id="gettbalarm" resultMap="gettbalarm">
+<!--        SELECT a.*,c.`name` AS alarmDefinename,d.name AS devicePropertyname,e.name AS alarmState,f.name AS dealPerson,g.name AS gradename FROM tb_alarm a JOIN tb_alarmdefine b ON a.alarmDefineId=b.id-->
+<!--        JOIN tb_alarmtype c ON c.id=b.alarmTypeId JOIN tb_device_property d ON d.id=a.devicePropertyId JOIN-->
+<!--        tb_alarmstate e ON e.id=a.alarmStateId JOIN ts_user f ON f.id=a.`dealPersonId` JOIN tb_grade g ON g.id=b.gradeId-->
+<!--        WHERE ${wheres}  limit #{pageIndexs},#{pageSize}-->
+        SELECT a.*,c.`name` AS alarmDefinename,d.name AS devicePropertyname,e.name AS alarmState,g.name AS gradename FROM
+        tb_alarm a JOIN tb_alarmdefine b ON a.alarmDefineId=b.id
+        JOIN tb_alarmtype c ON c.id=b.alarmTypeId
+        JOIN tb_device_property d ON d.id=a.devicePropertyId
+        JOIN tb_alarmstate e ON e.id=a.alarmStateId
+        JOIN tb_grade g ON g.id=b.gradeId  WHERE ${wheres}  limit #{pageIndexs},#{pageSize}
+    </select>
+    <select id="getuser" resultMap="user">
+        SELECT * from ts_user
+    </select>
+    <select id="gettbalarmcount" resultType="java.lang.Integer">
+        SELECT count(1) FROM tb_alarm a JOIN tb_alarmdefine b ON a.alarmDefineId=b.id
+        JOIN tb_alarmtype c ON c.id=b.alarmTypeId JOIN tb_device_property d ON d.id=a.devicePropertyId JOIN
+        tb_alarmstate e ON e.id=a.alarmStateId JOIN ts_user f ON f.id=a.`dealPersonId` JOIN tb_grade g ON g.id=b.gradeId
+        WHERE ${wheres}
+    </select>
+    <select id="gethistorytbalarm" resultMap="gettbalarm">
+        SELECT a.*,c.`name` AS alarmDefinename,d.name AS devicePropertyname,e.name AS alarmState,f.name AS dealPerson,g.name AS gradename FROM tb_alarm a JOIN tb_alarmdefine b ON a.alarmDefineId=b.id
+        JOIN tb_alarmtype c ON c.id=b.alarmTypeId JOIN tb_device_property d ON d.id=a.devicePropertyId JOIN
+        tb_alarmstate e ON e.id=a.alarmStateId JOIN ts_user f ON f.id=a.`dealPersonId` JOIN tb_grade g ON g.id=b.gradeId
+         limit #{pageIndexs},#{pageSize}
+    </select>
+    <select id="gethistorytbalarmcount" resultType="java.lang.Integer">
+        SELECT count(1) FROM tb_alarm a JOIN tb_alarmdefine b ON a.alarmDefineId=b.id
+        JOIN tb_alarmtype c ON c.id=b.alarmTypeId JOIN tb_device_property d ON d.id=a.devicePropertyId JOIN
+        tb_alarmstate e ON e.id=a.alarmStateId JOIN ts_user f ON f.id=a.`dealPersonId` JOIN tb_grade g ON g.id=b.gradeId
+    </select>
+    <select id="gettreeid" resultMap="gettreeid">
+        SELECT d.id AS devicePropertyId,a.id AS deviceid,c.id AS branchid FROM tb_device_property d JOIN  tb_device a ON a.id=d.`deviceId` JOIN tb_depart b ON a.departId=b.id JOIN tb_branch c ON b.branchId=c.`id`
+    </select>
+    <update id="Uptbalarm" parameterType="shuangjia.shuangjia.entities.Tbalarm">
+        UPDATE  tb_alarm SET
+        alarmStateId=#{alarmStateId},
+        `dealContent`=#{dealContent},
+        dealPersonId=#{dealPersonId},dealTime=#{dealTime} WHERE id=#{id};
+    </update>
+    <!--deviceProperty查询tb_alarmdefine-->
+   <select id="getAllAlarmDefine" resultMap="getAlarmDefine">
+        SELECT * FROM tb_alarmdefine
+    </select>
+    <!--插入报警记录-->
+    <insert id="insertAlarm" parameterType="shuangjia.shuangjia.entities.Tbalarm" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_alarm (alarmDefineId,devicePropertyId,alarmContent,alarmTime,alarmStateId,alarmValue)
+        VALUE
+        (#{alarmDefineId},#{devicePropertyId},#{alarmContent},#{alarmTime},#{alarmStateId},#{alarmValue})
+    </insert>
+    <!--查询报警记录-->
+    <select id="getAlarmByStateId" resultMap="gettbalarm">
+        SELECT * from tb_alarm
+        WHERE alarmDefineId=#{alarmDefineId}
+        AND devicePropertyId=#{devicePropertyId}
+        AND alarmStateId=1
+    </select>
+    <!--查询报警记录_时间-->
+    <select id="getAlarmByStateIdTime" resultMap="gettbalarm">
+        SELECT * from tb_alarm
+        WHERE alarmDefineId=#{alarmDefineId}
+        AND devicePropertyId=#{devicePropertyId}
+        AND alarmStateId=1
+        ORDER BY alarmTime DESC
+        LIMIT 1
+    </select>
+    <!--修改报警记录-->
+    <update id="updateAlarmState" parameterType="shuangjia.shuangjia.entities.Tbalarm">
+        UPDATE tb_alarm SET
+        alarmStateId=#{alarmStateId},
+        dealContent=#{dealContent},
+        dealTime=#{dealTime},
+        dealPersonId=#{dealPersonId}
+        WHERE id=#{id}
+    </update>
+</mapper>
